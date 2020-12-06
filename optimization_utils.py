@@ -153,11 +153,16 @@ def general_double(dataset, k_most_similar, k_most_dissimilar, sim_ord, dis_ord,
     C = np.load(f'{path}C.npy')
     uim = np.load(f'{path}uim.npy')
 
+    # user_dict is a dict which associates to each user_id the list of the consumed items (written as item_id)
+    # item_dict is a dict which associates to each item_id the list of the users who consumed the item (written as
+    # user_id)
     user_dict, item_dict = create_dicts(train)
 
+    # user mean normalization to compensate the bias
     means = get_user_means(uim, user_dict)
     uim = remove_user_means(means, uim)
 
+    # generate the similarity and dissimilarity graphs
     if method == 'UU':
         method1 = 'USERS'
         method2 = 'USERS'
@@ -187,14 +192,18 @@ def general_double(dataset, k_most_similar, k_most_dissimilar, sim_ord, dis_ord,
         h_sim = np.random.randn(sim_ord)
         h_dis = np.random.randn(dis_ord)
 
+        # generate the M_s and M_d matrices of equation (15). Here they are merged into a single matrix A for coding
+        # purposes.
         print(f'Optimizing with alpha = {alpha}')
         A, y = training_matrices(alpha, uim, train, graphs1, graphs2, sim_ord, dis_ord, method1, method2,
                                  means)
 
+        # apply linear least squares to find the optimal solution of the system (17)
         h_star = LLS(A, y, alpha, np.linalg.norm(h_sim), np.linalg.norm(h_dis), mu)
         h_sim = h_star[0:sim_ord]
         h_dis = h_star[-dis_ord:]
 
+        # populate the matrix X_sim and X_dis of equation (11), here written as uim_sim and uim_dis, respectively
         uim_sim = prediction_with_parameter(uim, graphs1, h_sim, sim_ord, method1)
         uim_dis = prediction_with_parameter(uim, graphs2, h_dis, dis_ord, method2)
         uim_graph_predicted = (1 - alpha) * uim_sim + alpha * uim_dis

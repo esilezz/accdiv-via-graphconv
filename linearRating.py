@@ -17,6 +17,7 @@ def complete(dataset, sim_ord, dis_ord, sim_neigh, dis_neigh, alpha, mu, graphTy
     if not os.path.isfile(save_path+mat_name):
         train_test_split(dataset)
 
+        # generate the matrix composed of the balance of two matrices X_sim and X_dis from equation (11)
         uim_predicted = general_double(dataset, sim_neigh, dis_neigh, sim_ord, dis_ord, alpha, mu, graphType)
         np.save(save_path + mat_name, uim_predicted)
         print(f'Completed! The generated matrix is in {save_path} and it is saved as {mat_name}')

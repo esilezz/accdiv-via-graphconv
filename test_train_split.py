@@ -37,6 +37,8 @@ def train_test_split(dataset):
         TOT_ITEMS = 3000
         COMMON_MIN = 1
 
+    # for MovieLens100k, Douban and Flixster we use the same train and test split as the paper "Geometric Matrix
+    # Completion with Recurrent Multi-Graph Neural Networks" (Monti et al.)
     if dataset == 'flixster':
         train = np.load('./flixster/data/train_pairs.npy')
         test = np.load('./flixster/data/test_pairs.npy')
@@ -73,6 +75,8 @@ def train_test_split(dataset):
     is_rated = is_rated * 1
     is_rated = sparse.csr_matrix(is_rated)
 
+    # The procedure to compute user similarities and item similarities is taken from the code of the paper "Rating
+    # Prediction via Graph Signal Processing" (Huang et al.)
     print('Computing user similarities')
     df = pd.DataFrame(uim.transpose())
     sims = df.corr()

@@ -30,7 +30,7 @@ def runAll(args, alpha):
     else:
         ndcg_items = 5
 
-    #### 1 LAYER ARCHITECTURE ####
+    #### ARCHITECTURE ####
     GSOSimOrder = args.simOrder  # filter order for the similarity network
     GSODisOrder = args.disOrder  # filter order for the dissimilarity network
 
